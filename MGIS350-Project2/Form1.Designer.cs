@@ -41,7 +41,7 @@
             this.chkPepperoni = new System.Windows.Forms.CheckBox();
             this.chkExCheese = new System.Windows.Forms.CheckBox();
             this.lstInventory = new System.Windows.Forms.ListBox();
-            this.lstPreview = new System.Windows.Forms.ListBox();
+            this.lstOrder = new System.Windows.Forms.ListBox();
             this.lblAddInv = new System.Windows.Forms.Label();
             this.lblPreview = new System.Windows.Forms.Label();
             this.nudAddInv = new System.Windows.Forms.NumericUpDown();
@@ -186,13 +186,13 @@
             this.lstInventory.Size = new System.Drawing.Size(168, 95);
             this.lstInventory.TabIndex = 5;
             // 
-            // lstPreview
+            // lstOrder
             // 
-            this.lstPreview.FormattingEnabled = true;
-            this.lstPreview.Location = new System.Drawing.Point(12, 295);
-            this.lstPreview.Name = "lstPreview";
-            this.lstPreview.Size = new System.Drawing.Size(336, 95);
-            this.lstPreview.TabIndex = 6;
+            this.lstOrder.FormattingEnabled = true;
+            this.lstOrder.Location = new System.Drawing.Point(12, 295);
+            this.lstOrder.Name = "lstOrder";
+            this.lstOrder.Size = new System.Drawing.Size(336, 95);
+            this.lstOrder.TabIndex = 6;
             // 
             // lblAddInv
             // 
@@ -214,7 +214,6 @@
             // 
             // nudAddInv
             // 
-            this.nudAddInv.DecimalPlaces = 1;
             this.nudAddInv.Location = new System.Drawing.Point(103, 27);
             this.nudAddInv.Minimum = new decimal(new int[] {
             100,
@@ -249,15 +248,18 @@
             this.Controls.Add(this.nudAddInv);
             this.Controls.Add(this.lblPreview);
             this.Controls.Add(this.lblAddInv);
-            this.Controls.Add(this.lstPreview);
+            this.Controls.Add(this.lstOrder);
             this.Controls.Add(this.lstInventory);
             this.Controls.Add(this.grpTopping);
             this.Controls.Add(this.grpSize);
             this.Controls.Add(this.btnPlaceOrder);
             this.Controls.Add(this.btnAddOrder);
             this.Controls.Add(this.btnAddInv);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(378, 467);
+            this.MinimumSize = new System.Drawing.Size(378, 467);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Project 2 - Vick";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.grpSize.ResumeLayout(false);
@@ -285,7 +287,7 @@
         private System.Windows.Forms.CheckBox chkPepperoni;
         private System.Windows.Forms.CheckBox chkExCheese;
         private System.Windows.Forms.ListBox lstInventory;
-        private System.Windows.Forms.ListBox lstPreview;
+        private System.Windows.Forms.ListBox lstOrder;
         private System.Windows.Forms.Label lblAddInv;
         private System.Windows.Forms.Label lblPreview;
         private System.Windows.Forms.NumericUpDown nudAddInv;

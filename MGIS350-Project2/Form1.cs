@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MGIS350_Project2.Properties;
 
@@ -40,11 +39,22 @@ namespace MGIS350_Project2
         {
             // Gather all saved ingredients and
             //add to working inventory dictionary
-            foreach (SettingsProperty currentProperty in _settings.Properties)
-            {
-                // E.g. Add string "Dough" with quantity double of 0.0
-                _dictInventory.Add(currentProperty.Name, Convert.ToDouble(_settings[currentProperty.Name]));
-            }
+            _dictInventory.Add("Dough", _settings.Dough);
+            _dictInventory.Add("Sauce", _settings.Sauce);
+            _dictInventory.Add("Cheese", _settings.Cheese);
+            _dictInventory.Add("Pepperoni", _settings.Pepperoni);
+            _dictInventory.Add("Mushrooms", _settings.Mushrooms);
+            _dictInventory.Add("Sausage", _settings.Sausage);
+
+            // The dynamic way to load settings
+            //though this automatically retrieves values in alpha order...
+            //foreach (SettingsProperty currentProperty in _settings.Properties)
+            //{
+            //    Console.WriteLine(currentProperty.Name);
+            //    // E.g. Add string "Dough" with quantity double of 0.0
+            //    _dictInventory.Add(currentProperty.Name, Convert.ToDouble(_settings[currentProperty.Name]));
+            //}
+
             // Call method to redraw inventory list
             //using updated inventory values
             UpdateInventory();
@@ -80,40 +90,6 @@ namespace MGIS350_Project2
 
         }
 
-        private void btnAddInv_Click(object sender, EventArgs e)
-        {
-            // First ensure an ingredient in the inventory listbox is selected
-            if (lstInventory.SelectedItem != null)
-            {
-                // Get the ingredient currently selected
-                //and convert to string
-                var selectedItem = lstInventory.SelectedItem.ToString();
-                // Trim the quantity and units of listbox item
-                //we only want the NAME of the ingredient
-                var selectedIngredient = selectedItem.Substring(0, selectedItem.IndexOf(" ", StringComparison.Ordinal));
-                // Get the desired quantity to add
-                //as qtyToAdd with the double type
-                var qtyToAdd = Convert.ToDouble(nudAddInv.Value);
-                // If this change does not result in a negative ingredient value
-                if ((_dictInventory[selectedIngredient] + qtyToAdd) >= 0)
-                {
-                    // Add the nud value to the selected ingredient
-                    //(This also allows negative values, provided the result
-                    //will remain non-negative)
-                    _dictInventory[selectedIngredient] += qtyToAdd;
-                }
-                else // The result of the calculation is negative
-                {
-                    // Set the selected ingredient to 0
-                    _dictInventory[selectedIngredient] = 0;
-                }
-
-            }
-            // Finally, update the inventory listbox
-            //via method to reflect inventory changes
-            UpdateInventory();
-        }
-
         // This method returns a boolean determining
         //if the available inventory meets or exceeds
         //the ingredients required by the currently selected size&ingredients
@@ -129,7 +105,7 @@ namespace MGIS350_Project2
             //for the current pizza.
             // Here we assume that every pizza will at least require
             //Dough, Sauce, and Cheese.
-            List<string> selectedIngredients = new List<string>{"Dough", "Sauce", "Cheese"};
+            List<string> selectedIngredients = new List<string> { "Dough", "Sauce", "Cheese" };
             // Linq expression to get all values from the Toppings group
             //and add to the list of ingredients for current pizza.
             selectedIngredients.AddRange(from Control c in grpTopping.Controls let box = c as CheckBox where (box != null) && box.Checked select c.Text);
@@ -137,10 +113,6 @@ namespace MGIS350_Project2
             //for current pizza.
             foreach (var selectedIngredient in selectedIngredients)
             {
-                //string ingredient = Regex.Replace(selectedIngredient, @"\s+", "");
-                
-                //Console.WriteLine(ingredientsRequired[ingredient]);
-
                 // We have an exception for the "Extra Cheese" topping
                 //since this topping uses the already existing Cheese ingredient
                 if (selectedIngredient == "Extra Cheese")
@@ -151,7 +123,6 @@ namespace MGIS350_Project2
                     //for the Extra Cheese topping
                     if (_dictInventory["Cheese"] < ingredientsRequired["ExtraCheese"] + ingredientsRequired["Cheese"])
                     {
-                        //Console.WriteLine(@"Ingredients don't satisfy order");
                         // If there is not enough cheese to allow for the desired Extra Cheese,
                         //return false;
                         return false;
@@ -162,9 +133,6 @@ namespace MGIS350_Project2
                 //the required amount
                 else if (_dictInventory[selectedIngredient] < ingredientsRequired[selectedIngredient])
                 {
-                    //Console.WriteLine(@"Ingredients don't satisfy order");
-
-
                     // The ingredient doesn't satisfy the order
                     //so we return false
                     return false;
@@ -174,177 +142,6 @@ namespace MGIS350_Project2
             //and none have returned false.
             // Meaning we have sufficient inventory for needed ingredients
             return true;
-        }
-
-        // Method that handles the "Add to Order" button click
-        private void btnAddOrder_Click(object sender, EventArgs e)
-        {
-            // Initialize the empty string for the ordered pizza
-            var strOrderAdd = "";
-            // Call method to get all required ingredients
-            var ingredientsRequired = GetRequiredIngredients();
-
-            // Get currently selected pizza size
-            var size = grpSize.Controls.OfType<RadioButton>()
-                .FirstOrDefault(p => p.Checked);
-            // As long a size is selected,
-            //make our order string equal to the size (plus a trailing space)
-            if (size != null)
-                strOrderAdd = size.Text + " ";
-
-            // Initialize list of ingredients needed
-            //for the current pizza.
-            // Here we assume that every pizza will at least require
-            //Dough, Sauce, and Cheese.
-            List<string> selectedIngredients = new List<string> { "Dough", "Sauce", "Cheese" };
-            // Linq expression to get all values from the Toppings group
-            //and add to the list of ingredients for current pizza.
-            selectedIngredients.AddRange(from Control c in grpTopping.Controls let box = c as CheckBox where (box != null) && box.Checked select c.Text);
-
-            // For each ingredient in our pizza
-            //we must subtract the required value from
-            //the current inventory levels
-            foreach (var selectedIngredient in selectedIngredients)
-            {
-                // Exception for Extra Cheese topping.
-                if (selectedIngredient == "Extra Cheese")
-                {
-                    // Subtract Extra Cheese ingredient requirement
-                    //from the Cheese inventory.
-                    //Since the cheese inventory is shared between Cheese and Extra Cheese.
-                    _dictInventory["Cheese"] -= ingredientsRequired["ExtraCheese"];
-                }
-                // For all other selected ingredients in the inventory
-                else if (_dictInventory.ContainsKey(selectedIngredient))
-                    // Subtract the required ingredient number from the current inventory
-                    _dictInventory[selectedIngredient] -= ingredientsRequired[selectedIngredient];
-            }
-
-            // Loop through all toppings that are checked
-            foreach (Control c in grpTopping.Controls)
-            {
-                // If topping is checked (and exists)
-                if ((c is CheckBox) && ((CheckBox)c).Checked)
-                    // Append the topping text to the order string
-                    strOrderAdd += c.Text + " ";
-            }
-            // Add the full order string to the order preview list box
-            lstPreview.Items.Add(strOrderAdd);
-
-            // Another loop through selected ingredients
-            //This can probably be merged with the ingredients loop above.
-            foreach (var ingredient in selectedIngredients)
-            {
-                //Console.WriteLine("Ingredient " + ingredient );
-
-                // Should the ingredient already be in one of the items in our order
-                if (_dictOrder.ContainsKey(ingredient))
-                {
-                    // Add the required value of this ingredient to the respective
-                    //existing ingredient in the current order values
-                    _dictOrder[ingredient] += ingredientsRequired[ingredient];
-                }
-                // The ingredient has not yet been added
-                //to the current order.
-                else
-                {
-                    // Exception for Extra Cheese
-                    if (ingredient == "Extra Cheese")
-                    {
-                        // If we already require cheese in the order.
-                        //..the alternate is unlikely since all orders require cheese
-                        //but on the off chance Extra Cheese is processed before Cheese,
-                        //we need this check
-                        if (_dictOrder.ContainsKey("Cheese"))
-                        {
-                            // Add the Extra Cheese required amount
-                            //to the total Cheese required by the order
-                            _dictOrder["Cheese"] += ingredientsRequired["ExtraCheese"];
-                        }
-                        // Somehow we have a pizza that has Extra Cheese, but no Cheese..
-                        else
-                        {
-                            // Declare the Cheese total for the order
-                            //and assign the initial value of the required Extra Cheese
-                            _dictOrder.Add("Cheese", ingredientsRequired["ExtraCheese"]);
-                        }
-                    }
-                    // For all other ingredients
-                    else
-                    {
-                        // Declare the ingredient total for the order
-                        //and assign the initial value of the required value of the ingredient
-                        //for the current item.
-                        _dictOrder.Add(ingredient, ingredientsRequired[ingredient]);
-                    }
-                }
-
-            }
-            // Finally, update the inventory list
-            //to reflect inventory minus the amount needed
-            //for the current order.
-
-            // NOTE: This approach has been discussed. Since we are able to cancel orders
-            //and subsequently add inventory back, it is not a problem to update inventory
-            //at this point. (Prior to the order being placed)
-            UpdateInventory();
-        }
-
-        // Method that handles "Place Order" click
-        private void btnPlaceOrder_Click(object sender, EventArgs e)
-        {
-            // Initialize dialog for order message
-            var orderMessage = "Your Order:\n";
-            // Loop through items in the order
-            for (int i = 0; i < lstPreview.Items.Count; i++)
-            {
-                // Concat the item number, and item size and listed toppings
-                var itemList = string.Format("Pizza {0}: {1}\n", i + 1, lstPreview.Items[i].ToString());
-                // Append this item to the message dialog
-                orderMessage += itemList;
-
-            }
-            // Display our dialog that lists all items on our order
-            MessageBox.Show(orderMessage);
-
-            // Clear the order dictionary and order listbox
-            //now that the order is complete
-            _dictOrder.Clear();
-            lstPreview.Items.Clear();
-            // And redraw inventory... to comply with requirements
-            UpdateInventory();
-
-        }
-
-        // This method handles the "Cancel Order" button click
-        private void btnCancelOrder_Click(object sender, EventArgs e)
-        {
-            // Check to ensure we have at least one item in the order
-            if (lstPreview.Items.Count > 0)
-            {
-                // Create prompt message for cancel button
-                string message = Resources.CancelPrompt;
-                // Create message box title
-                const string caption = @"Confirm Order Cancellation!";
-                // Call method to display prompt
-                CancelOrder(message, caption);
-            }
-        }
-
-        // Method to handle application closing
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            // Check to see if we have any items in order
-            if (lstPreview.Items.Count > 0)
-            {
-                // Create prompt message from saved string resource
-                string message = Resources.UnsavedPrompt;
-                // Create message box title
-                const string caption = @"Unsaved Order!";
-                // Set event cancel to returned boolean from method
-                //if method returns true, don't close the form.
-                e.Cancel = CancelOrder(message, caption);
-            }
         }
 
         // Method to prompt and handle clearing the current order items
@@ -378,7 +175,7 @@ namespace MGIS350_Project2
                 // Clear the current order values
                 _dictOrder.Clear();
                 // Clear all items in the order preview list
-                lstPreview.Items.Clear();
+                lstOrder.Items.Clear();
                 // Update the inventory list to reflect new values
                 UpdateInventory();
                 // Exit method returning false
@@ -444,7 +241,7 @@ namespace MGIS350_Project2
                 // Get text of checked radio button as string
                 var size = checkedSize.Text;
                 // Get type of Constants class from namespace as string
-                var tp = typeof (Constants).ToString();
+                var tp = typeof(Constants).ToString();
                 // Declare new type variable equal to
                 //the constants class Data type
                 Type constants = Type.GetType(tp);
@@ -455,7 +252,7 @@ namespace MGIS350_Project2
                     MethodInfo staticMethodInfo = constants.GetMethod(size);
                     // Invoke the defined method, set result equal to
                     //a readonly IList with each constant value for the given ingredient
-                    var ingredientsReadOnly = (IList<KeyValuePair<string, double>>) staticMethodInfo.Invoke(null, null);
+                    var ingredientsReadOnly = (IList<KeyValuePair<string, double>>)staticMethodInfo.Invoke(null, null);
                     // Convert the IList to a valid dictionary
                     ingredientsRequired = ingredientsReadOnly.ToDictionary(i => i.Key, i => i.Value);
                 }
@@ -466,6 +263,205 @@ namespace MGIS350_Project2
             }
             // return empty dictionary if no method for the given size was found
             return ingredientsRequired;
+        }
+
+        private void btnAddInv_Click(object sender, EventArgs e)
+        {
+            // First ensure an ingredient in the inventory listbox is selected
+            if (lstInventory.SelectedItem != null)
+            {
+                // Get the ingredient currently selected
+                //and convert to string
+                var selectedItem = lstInventory.SelectedItem.ToString();
+                // Trim the quantity and units of listbox item
+                //we only want the NAME of the ingredient
+                var selectedIngredient = selectedItem.Substring(0, selectedItem.IndexOf(" ", StringComparison.Ordinal));
+                // Get the desired quantity to add
+                //as qtyToAdd with the double type
+                var qtyToAdd = Convert.ToDouble(nudAddInv.Value);
+                // If this change does not result in a negative ingredient value
+                if ((_dictInventory[selectedIngredient] + qtyToAdd) >= 0)
+                {
+                    // Add the nud value to the selected ingredient
+                    //(This also allows negative values, provided the result
+                    //will remain non-negative)
+                    _dictInventory[selectedIngredient] += qtyToAdd;
+                }
+                else // The result of the calculation is negative
+                {
+                    // Set the selected ingredient to 0
+                    _dictInventory[selectedIngredient] = 0;
+                }
+
+            }
+            // Finally, update the inventory listbox
+            //via method to reflect inventory changes
+            UpdateInventory();
+        }
+
+        // Method that handles the "Add to Order" button click
+        private void btnAddOrder_Click(object sender, EventArgs e)
+        {
+            // Initialize the empty string for the ordered pizza
+            var strOrderAdd = "";
+            // Call method to get all required ingredients
+            var ingredientsRequired = GetRequiredIngredients();
+
+            // Get currently selected pizza size
+            var size = grpSize.Controls.OfType<RadioButton>()
+                .FirstOrDefault(p => p.Checked);
+            // As long a size is selected,
+            //make our order string equal to the size (plus a trailing space)
+            if (size != null)
+                strOrderAdd = size.Text + " ";
+
+            // Initialize list of ingredients needed
+            //for the current pizza.
+            // Here we assume that every pizza will at least require
+            //Dough, Sauce, and Cheese.
+            List<string> selectedIngredients = new List<string> { "Dough", "Sauce", "Cheese" };
+            // Linq expression to get all values from the Toppings group
+            //and add to the list of ingredients for current pizza.
+            selectedIngredients.AddRange(from Control c in grpTopping.Controls let box = c as CheckBox where (box != null) && box.Checked select c.Text);
+
+            // For each ingredient in our pizza
+            //we must subtract the required value from
+            //the current inventory levels
+            foreach (var selectedIngredient in selectedIngredients)
+            {
+                // Exception for Extra Cheese topping.
+                if (selectedIngredient == "Extra Cheese")
+                {
+                    // Subtract Extra Cheese ingredient requirement
+                    //from the Cheese inventory.
+                    //Since the cheese inventory is shared between Cheese and Extra Cheese.
+                    _dictInventory["Cheese"] -= ingredientsRequired["ExtraCheese"];
+                }
+                // For all other selected ingredients in the inventory
+                else if (_dictInventory.ContainsKey(selectedIngredient))
+                    // Subtract the required ingredient number from the current inventory
+                    _dictInventory[selectedIngredient] -= ingredientsRequired[selectedIngredient];
+
+                // Next, we update the current order dictionary with the required ingredients
+
+                // Should the ingredient already be in one of the items in our order
+                if (_dictOrder.ContainsKey(selectedIngredient))
+                {
+                    // Add the required value of this ingredient to the respective
+                    //existing ingredient in the current order values
+                    _dictOrder[selectedIngredient] += ingredientsRequired[selectedIngredient];
+                }
+                // The ingredient has not yet been added
+                //to the current order.
+                else
+                {
+                    // Exception for Extra Cheese
+                    if (selectedIngredient == "Extra Cheese")
+                    {
+                        // If we already require cheese in the order.
+                        //..the alternate is unlikely since all orders require cheese
+                        //but on the off chance Extra Cheese is processed before Cheese,
+                        //we need this check
+                        if (_dictOrder.ContainsKey("Cheese"))
+                        {
+                            // Add the Extra Cheese required amount
+                            //to the total Cheese required by the order
+                            _dictOrder["Cheese"] += ingredientsRequired["ExtraCheese"];
+                        }
+                        // Somehow we have a pizza that has Extra Cheese, but no Cheese..
+                        else
+                        {
+                            // Declare the Cheese total for the order
+                            //and assign the initial value of the required Extra Cheese
+                            _dictOrder.Add("Cheese", ingredientsRequired["ExtraCheese"]);
+                        }
+                    }
+                    // For all other ingredients
+                    else
+                    {
+                        // Declare the ingredient total for the order
+                        //and assign the initial value of the required value of the ingredient
+                        //for the current item.
+                        _dictOrder.Add(selectedIngredient, ingredientsRequired[selectedIngredient]);
+                    }
+                }
+            }
+
+            // Loop through all toppings that are checked
+            foreach (Control c in grpTopping.Controls)
+            {
+                // If topping is checked (and exists)
+                if ((c is CheckBox) && ((CheckBox)c).Checked)
+                    // Append the topping text to the order string
+                    strOrderAdd += c.Text + " ";
+            }
+            // Add the full order string to the order preview list box
+            lstOrder.Items.Add(strOrderAdd);
+
+            // Finally, update the inventory list
+            //to reflect inventory minus the amount needed
+            //for the current order.
+
+            // NOTE: This approach has been discussed. Since we are able to cancel orders
+            //and subsequently add inventory back, it is not a problem to update inventory
+            //at this point. (Prior to the order being placed)
+            UpdateInventory();
+        }
+
+        // Method that handles "Place Order" click
+        private void btnPlaceOrder_Click(object sender, EventArgs e)
+        {
+            if (lstOrder.Items.Count > 0)
+            {
+                // Linq expression to gather all items
+                //within the order and assign to string
+                var orderMessage = lstOrder.Items.Cast<object>()
+                    // Get each item in order preview
+                    //prepend with "Pizza #: "
+                    .Select((t, i) => string.Format("Pizza {0}: {1}\n", i + 1, t.ToString()))
+                    // Combine all items into dialog message
+                    .Aggregate("", (current, itemList) => current + itemList);
+                // Display dialog that lists all items on current order
+                MessageBox.Show(orderMessage, @"Your Order");
+
+                // Clear the order dictionary and order listbox
+                //now that the order is complete
+                _dictOrder.Clear();
+                lstOrder.Items.Clear();
+                // And redraw inventory... to comply with requirements
+                UpdateInventory();
+            }
+        }
+
+        // This method handles the "Cancel Order" button click
+        private void btnCancelOrder_Click(object sender, EventArgs e)
+        {
+            // Check to ensure we have at least one item in the order
+            if (lstOrder.Items.Count > 0)
+            {
+                // Create prompt message for cancel button
+                string message = Resources.CancelPrompt;
+                // Create message box title
+                const string caption = @"Confirm Order Cancellation!";
+                // Call method to display prompt
+                CancelOrder(message, caption);
+            }
+        }
+
+        // Method to handle application closing
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Check to see if we have any items in order
+            if (lstOrder.Items.Count > 0)
+            {
+                // Create prompt message from saved string resource
+                string message = Resources.UnsavedPrompt;
+                // Create message box title
+                const string caption = @"Unsaved Order!";
+                // Set event cancel to returned boolean from method
+                //if method returns true, don't close the form.
+                e.Cancel = CancelOrder(message, caption);
+            }
         }
 
     }
