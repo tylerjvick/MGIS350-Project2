@@ -6,6 +6,19 @@ using System.Reflection;
 using System.Windows.Forms;
 using MGIS350_Project2.Properties;
 
+/*
+ * Creator: Tyler Vick
+ * Name: MGIS350-Project 2
+ * Description: Project 2 for Developing Business Applications
+ *              at RIT Spring 2015
+ * Date: 04/14/2015
+ * Extra Features:  Inventory values will persist between sessions
+ *                  using Application Properties Settings.
+ *                  Inventory values will update upon adding to order,
+ *                  but if an order is cancelled or the form is closed
+ *                  without placing, the values will return to the inventory.
+ */
+
 namespace MGIS350_Project2
 {
     public partial class Form1 : Form
@@ -178,6 +191,8 @@ namespace MGIS350_Project2
                 lstOrder.Items.Clear();
                 // Update the inventory list to reflect new values
                 UpdateInventory();
+                // Save the application settings
+                _settings.Save();
                 // Exit method returning false
                 return false;
             }
@@ -213,10 +228,9 @@ namespace MGIS350_Project2
                 lstInventory.Items.Add(string.Format(@"{0} {1} {2}", ingredient.Key, ingredient.Value, ingredientUnit));
                 // Write the given inventory value to
                 //persistent application settings
-                //... this is an EXTRA feature
+                //... this is an extra feature
                 _settings[ingredient.Key] = ingredient.Value;
-                // Save the application settings
-                _settings.Save();
+
             }
             // Re-select the list item at the original index
             lstInventory.SelectedIndex = selectedIndex;
@@ -297,6 +311,8 @@ namespace MGIS350_Project2
             // Finally, update the inventory listbox
             //via method to reflect inventory changes
             UpdateInventory();
+            // Save the application settings
+            _settings.Save();
         }
 
         // Method that handles the "Add to Order" button click
@@ -430,6 +446,8 @@ namespace MGIS350_Project2
                 lstOrder.Items.Clear();
                 // And redraw inventory... to comply with requirements
                 UpdateInventory();
+                // Save the application settings
+                _settings.Save();
             }
         }
 
