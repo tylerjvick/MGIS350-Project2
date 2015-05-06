@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -416,13 +418,26 @@ namespace MGIS350_Project2
 
             // Finally, update the inventory list
             //to reflect inventory minus the amount needed
-            //for the current order.
+            //for the current order.sq
 
             // NOTE: This approach has been discussed. Since we are able to cancel orders
             //and subsequently add inventory back, it is not a problem to update inventory
             //at this point. (Prior to the order being placed)
             UpdateInventory();
         }
+
+        // Testing sql construct parameters
+        public static List<SqlParameter> SetOrderItems(int itemCount, String[] commaSepIngredients)
+        {
+            
+            string csString = string.Join(",", Array.ConvertAll(commaSepIngredients, element => element.ToString()));
+            Console.WriteLine(csString);
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("@OrderID", 2));
+            parameters.Add(new SqlParameter("@Item_Number", itemCount));
+            parameters.Add(new SqlParameter("@Ingredients_Array", csString));
+            return parameters;
+        } 
 
         // Method that handles "Place Order" click
         private void btnPlaceOrder_Click(object sender, EventArgs e)
@@ -448,7 +463,19 @@ namespace MGIS350_Project2
                 UpdateInventory();
                 // Save the application settings
                 _settings.Save();
+
+                // Database integration
+
+
             }
+            // Testing DB
+            //var getIngredients = new OrderHistory();
+            //string newOrder = @"INSERT INTO Orders ('Item_Count') VALUES (4);";
+
+            var itemCount = lstOrder.Items.Count.ToString();
+
+            OrderHistory.InsertOrder("dbo.InsertIngredients", SetOrderItems(2, new String[]{"Large", "Extra Cheese"}), null);
+            //getIngredients.ArchiveOrder();
         }
 
         // This method handles the "Cancel Order" button click

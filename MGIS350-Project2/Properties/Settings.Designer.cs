@@ -94,5 +94,16 @@ namespace MGIS350_Project2.Properties {
                 this["Sausage"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=WIN-FMR0ILD7T7C;Initial Catalog=MGIS350Group;Integrated Security=True" +
+            "")]
+        public string MGIS350GroupConnectionString {
+            get {
+                return ((string)(this["MGIS350GroupConnectionString"]));
+            }
+        }
     }
 }
