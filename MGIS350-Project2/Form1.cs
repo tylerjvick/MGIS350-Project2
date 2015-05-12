@@ -32,7 +32,7 @@ namespace MGIS350_Project2
         // Settings reference to get/set inventory
         readonly Settings _settings = Settings.Default;
 
-        Dictionary<string, List<string>> _orderHistory = DBInterface.OrderHistory();
+        Dictionary<string, List<string>> _orderHistory = DbInterface.OrderHistory();
 
         public Form1()
         {
@@ -280,7 +280,7 @@ namespace MGIS350_Project2
         private void GetOrderHistory()
         {
             // Get the order history dictionary from database class
-            _orderHistory = DBInterface.OrderHistory();
+            _orderHistory = DbInterface.OrderHistory();
             // If a past order is currently selected, set its index to variable
             //otherwise, the value is zero
             var previousIndex = lstOrderHistory.SelectedIndex > 0 ? lstOrderHistory.SelectedIndex : -1;
@@ -466,7 +466,7 @@ namespace MGIS350_Project2
                 // Cast all entries in the current order to a list
                 var orderList = lstOrder.Items.Cast<string>().ToList();
                 // Pass new order to the database class
-                DBInterface.InsertOrder(orderList);
+                DbInterface.InsertOrder(orderList);
                 // Redraw the order history
                 GetOrderHistory();
 

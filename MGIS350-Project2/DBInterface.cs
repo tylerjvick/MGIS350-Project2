@@ -9,12 +9,15 @@ using MGIS350_Project2.Properties;
 
 namespace MGIS350_Project2
 {
-    class DBInterface
+    static class DbInterface
     {
+
         // Initialize string to handle all message box text
         private static string ErrorString { get; set; }
+
         // Initialize type to handle message box error buttons
         private static MessageBoxButtons ErrorButtons { get; set; }
+
         // Method to display messagebox on error
         private static void MessageBoxError()
         {
@@ -98,12 +101,13 @@ namespace MGIS350_Project2
             catch (Exception)
             {
                 // Append string to messagebox dialog
-                ErrorString += "Failed to insert new order into the database.\nWould you like to retry?\n";
+                ErrorString += "Failed to insert new order into the database.\nPlease try again.\n";
                 // Set messagebox error buttons to yes/no
                 //this still needs functionality
-                ErrorButtons = MessageBoxButtons.YesNo;
+                //ErrorButtons = MessageBoxButtons.YesNo;
                 // Show messagebox for error
                 MessageBoxError();
+
                 //System.Windows.Forms.MessageBox.Show(
                 //    "Failed to insert new order into the database.\nWould you like to retry?",
                 //    @"Database Connection Failed", System.Windows.Forms.MessageBoxButtons.YesNo);
