@@ -31,7 +31,7 @@ namespace MGIS350_Project2
         private static string DefaultConnection()
         {
             // Application stored DB connection string
-            return Settings.Default.MGIS350Group2ConnectionString;
+            return Settings.Default.TylerDBConnectionString;
         }
 
         // Method to initiate database connection
