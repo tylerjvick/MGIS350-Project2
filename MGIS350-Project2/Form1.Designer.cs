@@ -46,6 +46,9 @@
             this.lblPreview = new System.Windows.Forms.Label();
             this.nudAddInv = new System.Windows.Forms.NumericUpDown();
             this.btnCancelOrder = new System.Windows.Forms.Button();
+            this.lstOrderHistory = new System.Windows.Forms.ListBox();
+            this.lstItemHistory = new System.Windows.Forms.ListBox();
+            this.lblPastOrders = new System.Windows.Forms.Label();
             this.grpSize.SuspendLayout();
             this.grpTopping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAddInv)).BeginInit();
@@ -239,11 +242,40 @@
             this.btnCancelOrder.UseVisualStyleBackColor = true;
             this.btnCancelOrder.Click += new System.EventHandler(this.btnCancelOrder_Click);
             // 
+            // lstOrderHistory
+            // 
+            this.lstOrderHistory.FormattingEnabled = true;
+            this.lstOrderHistory.Location = new System.Drawing.Point(400, 27);
+            this.lstOrderHistory.Name = "lstOrderHistory";
+            this.lstOrderHistory.Size = new System.Drawing.Size(366, 173);
+            this.lstOrderHistory.TabIndex = 11;
+            this.lstOrderHistory.SelectedIndexChanged += new System.EventHandler(this.lstOrderHistory_SelectedIndexChanged);
+            // 
+            // lstItemHistory
+            // 
+            this.lstItemHistory.FormattingEnabled = true;
+            this.lstItemHistory.Location = new System.Drawing.Point(400, 230);
+            this.lstItemHistory.Name = "lstItemHistory";
+            this.lstItemHistory.Size = new System.Drawing.Size(366, 160);
+            this.lstItemHistory.TabIndex = 12;
+            // 
+            // lblPastOrders
+            // 
+            this.lblPastOrders.AutoSize = true;
+            this.lblPastOrders.Location = new System.Drawing.Point(400, 8);
+            this.lblPastOrders.Name = "lblPastOrders";
+            this.lblPastOrders.Size = new System.Drawing.Size(62, 13);
+            this.lblPastOrders.TabIndex = 13;
+            this.lblPastOrders.Text = "Past Orders";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(362, 428);
+            this.ClientSize = new System.Drawing.Size(778, 428);
+            this.Controls.Add(this.lblPastOrders);
+            this.Controls.Add(this.lstItemHistory);
+            this.Controls.Add(this.lstOrderHistory);
             this.Controls.Add(this.btnCancelOrder);
             this.Controls.Add(this.nudAddInv);
             this.Controls.Add(this.lblPreview);
@@ -256,12 +288,11 @@
             this.Controls.Add(this.btnAddOrder);
             this.Controls.Add(this.btnAddInv);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(378, 467);
-            this.MinimumSize = new System.Drawing.Size(378, 467);
             this.Name = "Form1";
             this.Text = "Project 2 - Vick";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Shown += new System.EventHandler(this.Form1_Shown);
             this.grpSize.ResumeLayout(false);
             this.grpSize.PerformLayout();
             this.grpTopping.ResumeLayout(false);
@@ -292,6 +323,9 @@
         private System.Windows.Forms.Label lblPreview;
         private System.Windows.Forms.NumericUpDown nudAddInv;
         private System.Windows.Forms.Button btnCancelOrder;
+        private System.Windows.Forms.ListBox lstOrderHistory;
+        private System.Windows.Forms.ListBox lstItemHistory;
+        private System.Windows.Forms.Label lblPastOrders;
     }
 }
 

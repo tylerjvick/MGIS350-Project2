@@ -33,6 +33,8 @@ namespace MGIS350_Project2
         // Settings reference to get/set inventory
         readonly Settings _settings = Settings.Default;
 
+        Dictionary<string, List<string>> orderHistory = DBInterface.OrderHistory();
+
         public Form1()
         {
             InitializeComponent();
@@ -50,6 +52,7 @@ namespace MGIS350_Project2
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
             // Gather all saved ingredients and
             //add to working inventory dictionary
             _dictInventory.Add("Dough", _settings.Dough);
@@ -71,6 +74,11 @@ namespace MGIS350_Project2
             // Call method to redraw inventory list
             //using updated inventory values
             UpdateInventory();
+
+
+            // New for Project 3
+            // Retrieve the entire order history and draw on form
+            //GetOrderHistory();
 
         }
 
@@ -279,6 +287,32 @@ namespace MGIS350_Project2
             return ingredientsRequired;
         }
 
+        // New method for project 3
+        // Draw the order history in the "Past Orders" section
+        private void GetOrderHistory()
+        {
+            // Get the order history dictionary from database class
+            orderHistory = DBInterface.OrderHistory();
+            // If a past order is currently selected, set its index to variable
+            //otherwise, the value is zero
+            var previousIndex = lstOrderHistory.SelectedIndex > 0 ? lstOrderHistory.SelectedIndex : -1;
+            // Clear the current order history listbox
+            lstOrderHistory.Items.Clear();
+            // Iterate through all orders returned from the database
+            foreach (KeyValuePair<string, List<string>> keyValuePair in orderHistory)
+            {
+                // Add the given order (as a string) to the order history listbox
+                lstOrderHistory.Items.Add(keyValuePair.Key.ToString());
+            }
+
+            // Set the selected order to the previous value
+            //the first item will be selected by default
+            // This will also trigger the items listbox to redraw
+            //using the lstOrderHistory_SelectedIndexChanged method
+            lstOrderHistory.SelectedIndex = previousIndex;
+
+        }
+
         private void btnAddInv_Click(object sender, EventArgs e)
         {
             // First ensure an ingredient in the inventory listbox is selected
@@ -329,7 +363,7 @@ namespace MGIS350_Project2
             // As long a size is selected,
             //make our order string equal to the size (plus a trailing space)
             if (size != null)
-                strOrderAdd = size.Text + " ";
+                strOrderAdd = size.Text;
 
             // Initialize list of ingredients needed
             //for the current pizza.
@@ -409,7 +443,7 @@ namespace MGIS350_Project2
                 // If topping is checked (and exists)
                 if ((c is CheckBox) && ((CheckBox)c).Checked)
                     // Append the topping text to the order string
-                    strOrderAdd += c.Text + " ";
+                    strOrderAdd += ", " + c.Text;
             }
             // Add the full order string to the order preview list box
             lstOrder.Items.Add(strOrderAdd);
@@ -439,6 +473,14 @@ namespace MGIS350_Project2
                     .Aggregate("", (current, itemList) => current + itemList);
                 // Display dialog that lists all items on current order
                 MessageBox.Show(orderMessage, @"Your Order");
+
+                // New code for project 3
+                // Cast all entries in the current order to a list
+                var orderList = lstOrder.Items.Cast<string>().ToList();
+                // Pass new order to the database class
+                DBInterface.InsertOrder(orderList);
+                // Redraw the order history
+                GetOrderHistory();
 
                 // Clear the order dictionary and order listbox
                 //now that the order is complete
@@ -480,6 +522,36 @@ namespace MGIS350_Project2
                 //if method returns true, don't close the form.
                 e.Cancel = CancelOrder(message, caption);
             }
+        }
+
+        // New trigger method for project 3
+        // When the selected order in the order history lisbox is changed
+        //redraw the item history listbox with the "pizzas" from the newly selected order
+        private void lstOrderHistory_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Get the currently selected order as string
+            var selectedOrder = lstOrderHistory.GetItemText(lstOrderHistory.SelectedItem).ToString();
+            // Using the selected order as the given key,
+            //get the list of items in that order from the orderHistory dictionary
+            var selectedList = orderHistory[selectedOrder];
+            // Clear the item history listbox
+            lstItemHistory.Items.Clear();
+            // Iterate through the list of items for the selected order
+            foreach (string s in selectedList)
+            {
+                // Add each "pizza" as an item to the item history listbox
+                lstItemHistory.Items.Add(s);
+            }
+
+        }
+
+        // Testing order retrieval using this trigger
+        //Doesn't start the DB connections until the form is displayed,
+        //making it appear "faster" to the user
+        private void Form1_Shown(object sender, EventArgs e)
+        {
+            // Retrieve and draw entire order history
+            GetOrderHistory();
         }
 
     }
