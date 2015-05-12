@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -33,7 +32,7 @@ namespace MGIS350_Project2
         // Settings reference to get/set inventory
         readonly Settings _settings = Settings.Default;
 
-        Dictionary<string, List<string>> orderHistory = DBInterface.OrderHistory();
+        Dictionary<string, List<string>> _orderHistory = DBInterface.OrderHistory();
 
         public Form1()
         {
@@ -95,20 +94,9 @@ namespace MGIS350_Project2
                 // Call function to ensure inventory levels
                 //satisfies all required ingredients from the order
                 var isInvAvailable = CheckIngredients();
-                if (isInvAvailable == false)
-                {
-                    // If CheckIngredients returns false
-                    //disable the Add to Order button
-                    btnAddOrder.Enabled = false;
-                }
-                else
-                {
-                    // Else CheckIngredients is true
-                    //so the Add to Order button is enabled
-                    btnAddOrder.Enabled = true;
-                }
+                // New Code to set Add to Order button disabled state... Should test more
+                btnAddOrder.Enabled = isInvAvailable;
             }
-
         }
 
         // This method returns a boolean determining
@@ -292,17 +280,17 @@ namespace MGIS350_Project2
         private void GetOrderHistory()
         {
             // Get the order history dictionary from database class
-            orderHistory = DBInterface.OrderHistory();
+            _orderHistory = DBInterface.OrderHistory();
             // If a past order is currently selected, set its index to variable
             //otherwise, the value is zero
             var previousIndex = lstOrderHistory.SelectedIndex > 0 ? lstOrderHistory.SelectedIndex : -1;
             // Clear the current order history listbox
             lstOrderHistory.Items.Clear();
             // Iterate through all orders returned from the database
-            foreach (KeyValuePair<string, List<string>> keyValuePair in orderHistory)
+            foreach (KeyValuePair<string, List<string>> keyValuePair in _orderHistory)
             {
                 // Add the given order (as a string) to the order history listbox
-                lstOrderHistory.Items.Add(keyValuePair.Key.ToString());
+                lstOrderHistory.Items.Add(keyValuePair.Key);
             }
 
             // Set the selected order to the previous value
@@ -530,10 +518,10 @@ namespace MGIS350_Project2
         private void lstOrderHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Get the currently selected order as string
-            var selectedOrder = lstOrderHistory.GetItemText(lstOrderHistory.SelectedItem).ToString();
+            var selectedOrder = lstOrderHistory.GetItemText(lstOrderHistory.SelectedItem);
             // Using the selected order as the given key,
             //get the list of items in that order from the orderHistory dictionary
-            var selectedList = orderHistory[selectedOrder];
+            var selectedList = _orderHistory[selectedOrder];
             // Clear the item history listbox
             lstItemHistory.Items.Clear();
             // Iterate through the list of items for the selected order

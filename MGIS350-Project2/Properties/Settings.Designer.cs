@@ -109,8 +109,8 @@ namespace MGIS350_Project2.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=WIN-FMR0ILD7T7C;Initial Catalog=MGIS350Group;Integrated Security=True" +
-            "")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=svcobdb.main.ad.rit.edu\\scbsqldev,50469;Initial Catalog=DBA_2145_Team" +
+            "_2;Persist Security Info=True;User ID=dbateam2;Password=nhjweaao&#3376ZUUY")]
         public string MGIS350Group2ConnectionString {
             get {
                 return ((string)(this["MGIS350Group2ConnectionString"]));

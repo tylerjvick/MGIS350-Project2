@@ -31,9 +31,10 @@
     <Setting Name="MGIS350Group2ConnectionString" Type="(Connection string)" Scope="Application">
       <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;ConnectionString&gt;Data Source=WIN-FMR0ILD7T7C;Initial Catalog=MGIS350Group;Integrated Security=True&lt;/ConnectionString&gt;
+  &lt;ConnectionString&gt;Data Source=svcobdb.main.ad.rit.edu\scbsqldev,50469;Initial Catalog=DBA_2145_Team_2;Persist Security Info=True;User ID=dbateam2;Password=nhjweaao&amp;amp;#3376ZUUY&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
-      <Value Profile="(Default)">Data Source=WIN-FMR0ILD7T7C;Initial Catalog=MGIS350Group;Integrated Security=True</Value>
+      <Value Profile="(Default)">Data Source=svcobdb.main.ad.rit.edu\scbsqldev,50469;Initial Catalog=DBA_2145_Team_2;Persist Security Info=True;User ID=dbateam2;Password=nhjweaao&amp;#3376ZUUY</Value>
     </Setting>
   </Settings>
 </SettingsFile>

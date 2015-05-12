@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using MGIS350_Project2.Properties;
 
 namespace MGIS350_Project2
 {
@@ -14,21 +14,21 @@ namespace MGIS350_Project2
         // Initialize string to handle all message box text
         private static string ErrorString { get; set; }
         // Initialize type to handle message box error buttons
-        private static System.Windows.Forms.MessageBoxButtons ErrorButtons { get; set; }
+        private static MessageBoxButtons ErrorButtons { get; set; }
         // Method to display messagebox on error
         private static void MessageBoxError()
         {
             // Show messagebox with current string and any set error buttons
-            System.Windows.Forms.MessageBox.Show(ErrorString, @"Database Error", ErrorButtons);
+            MessageBox.Show(ErrorString, @"Database Error", ErrorButtons);
             // Set the display string and messagebox button to default values
             ErrorString = "";
-            ErrorButtons = System.Windows.Forms.MessageBoxButtons.OK;
+            ErrorButtons = MessageBoxButtons.OK;
         }
 
         private static string DefaultConnection()
         {
             // Application stored DB connection string
-            return Properties.Settings.Default.TylerDBConnectionString;
+            return Settings.Default.TylerDBConnectionString;
         }
 
         // Method to initiate database connection
@@ -52,7 +52,7 @@ namespace MGIS350_Project2
                 // Open the database connection
                 command.Connection.Open();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Append string to messagebox error dialog
                 ErrorString += "Connection to database failed\n";
@@ -101,7 +101,7 @@ namespace MGIS350_Project2
                 ErrorString += "Failed to insert new order into the database.\nWould you like to retry?\n";
                 // Set messagebox error buttons to yes/no
                 //this still needs functionality
-                ErrorButtons = System.Windows.Forms.MessageBoxButtons.YesNo;
+                ErrorButtons = MessageBoxButtons.YesNo;
                 // Show messagebox for error
                 MessageBoxError();
                 //System.Windows.Forms.MessageBox.Show(
