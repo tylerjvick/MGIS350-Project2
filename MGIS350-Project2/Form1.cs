@@ -6,9 +6,9 @@ using System.Windows.Forms;
 using MGIS350_Project2.Properties;
 
 /*
- * Creator: Tyler Vick
- * Name: MGIS350-Project 2
- * Description: Project 2 for Developing Business Applications
+ * Creator: Group 2 - Kassandra Rojas, Sagar Gajera, Christian Salerno, Sheldon Ennis-Mitchell, Tyler Vick
+ * Name: MGIS350-Project 3
+ * Description: Project 3 for Developing Business Applications
  *              at RIT Spring 2015
  * Date: 04/14/2015
  * Extra Features:  Inventory values will persist between sessions
