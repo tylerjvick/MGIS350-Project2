@@ -521,7 +521,8 @@ namespace MGIS350_Project2
             var selectedOrder = lstOrderHistory.GetItemText(lstOrderHistory.SelectedItem);
             // Using the selected order as the given key,
             //get the list of items in that order from the orderHistory dictionary
-            var selectedList = _orderHistory[selectedOrder];
+            //pass empty list if no value exists
+            var selectedList = _orderHistory[selectedOrder] ?? new List<string>();
             // Clear the item history listbox
             lstItemHistory.Items.Clear();
             // Iterate through the list of items for the selected order
